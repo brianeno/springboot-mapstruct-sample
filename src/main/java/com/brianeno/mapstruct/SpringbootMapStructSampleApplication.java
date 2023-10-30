@@ -11,22 +11,22 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @OpenAPIDefinition(
     info = @Info(
-        title = "Spring Boot REST API Documentation",
-        description = "Spring Boot REST API Documentation",
+        title = "Spring Boot User and Project Documentation",
+        description = "Spring Boot User and Project Documentation",
         version = "v1.0",
         contact = @Contact(
-            name = "Ramesh",
-            email = "javaguides.net@gmail.com",
-            url = "https://www.javaguides.net"
+            name = "Brian",
+            email = "brian.enochson@gmail.com",
+            url = "https://www.brianeno.net"
         ),
         license = @License(
             name = "Apache 2.0",
-            url = "https://www.javaguides.net/license"
+            url = "https://www.brianeno.net/license"
         )
     ),
     externalDocs = @ExternalDocumentation(
-        description = "Spring Boot User Management Documentation",
-        url = "https://www.javaguides.net/user_management.html"
+        description = "Spring Boot User and Project Documentation",
+        url = "https://www.brianeno.net/user_management.html"
     )
 )
 public class SpringbootMapStructSampleApplication {

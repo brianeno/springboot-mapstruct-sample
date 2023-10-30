@@ -1,10 +1,13 @@
 package com.brianeno.mapstruct.service.impl;
 
 import com.brianeno.mapstruct.dto.UserDto;
+import com.brianeno.mapstruct.entity.Project;
 import com.brianeno.mapstruct.entity.User;
 import com.brianeno.mapstruct.exception.EmailAlreadyExistsException;
 import com.brianeno.mapstruct.exception.ResourceNotFoundException;
+import com.brianeno.mapstruct.mapper.ProjectMapper;
 import com.brianeno.mapstruct.mapper.UserMapper;
+import com.brianeno.mapstruct.repository.ProjectRepository;
 import com.brianeno.mapstruct.repository.UserRepository;
 import com.brianeno.mapstruct.service.UserService;
 import lombok.AllArgsConstructor;
@@ -19,6 +22,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+  private final ProjectRepository projectRepository;
+  private final UserMapper userMapper;
 
   @Override
   public UserDto createUser(UserDto userDto) {
@@ -30,48 +35,57 @@ public class UserServiceImpl implements UserService {
       throw new EmailAlreadyExistsException("Email Already Exists for User");
     }
 
-    User user = UserMapper.MAPPER.mapToUser(userDto);
+    final var user = userMapper.mapToUser(userDto);
 
     User savedUser = this.userRepository.save(user);
 
-    UserDto savedUserDto = UserMapper.MAPPER.mapToUserDto(savedUser);
+    final var savedUserDto = userMapper.mapToUserDto(savedUser);
 
     return savedUserDto;
   }
 
   @Override
   public UserDto getUserById(Long userId) {
-    User user = this.userRepository.findById(userId).orElseThrow(
+    final var user = this.userRepository.findById(userId).orElseThrow(
         () -> new ResourceNotFoundException("User", "id", userId)
     );
-    return UserMapper.MAPPER.mapToUserDto(user);
+    // let's load the projects for this user
+    user.setProjects(this.projectRepository.findByManagerId(user.getId()));
+    return userMapper.mapToUserDto(user);
   }
 
   @Override
   public List<UserDto> getAllUsers() {
-    List<User> users = this.userRepository.findAll();
+    final var users = this.userRepository.findAll();
 
-    return users.stream().map(UserMapper.MAPPER::mapToUserDto)
+    // let's load the projects for each user
+    //users.forEach(u -> u.setProjects(this.projectRepository.findByManagerId(u.getId())));
+
+    return users.stream().map(userMapper::mapToUserDto)
         .collect(Collectors.toList());
   }
 
   @Override
   public UserDto updateUser(UserDto user) {
 
-    User existingUser = this.userRepository.findById(user.getId()).orElseThrow(
+    final var existingUser = this.userRepository.findById(user.getId()).orElseThrow(
         () -> new ResourceNotFoundException("User", "id", user.getId())
     );
 
     existingUser.setFirstName(user.getFirstName());
     existingUser.setLastName(user.getLastName());
     existingUser.setEmail(user.getEmail());
-    User updatedUser = this.userRepository.save(existingUser);
-    return UserMapper.MAPPER.mapToUserDto(updatedUser);
+    final var updatedUser = this.userRepository.save(existingUser);
+    return userMapper.mapToUserDto(updatedUser);
   }
 
   @Override
   public void deleteUser(Long userId) {
 
+    List<Project> projects = this.projectRepository.findByManagerId(userId);
+    if (!projects.isEmpty()) {
+      throw new RuntimeException("Cannot delete, projects exist for this user " + userId);
+    }
     this.userRepository.findById(userId).orElseThrow(
         () -> new ResourceNotFoundException("User", "id", userId)
     );

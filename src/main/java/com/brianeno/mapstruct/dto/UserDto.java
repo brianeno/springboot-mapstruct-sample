@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Schema(
     description = "UserDto Model Information"
 )
@@ -22,23 +24,30 @@ public class UserDto {
   @Schema(
       description = "User First Name"
   )
-  // User first name should not be null or empty
   @NotEmpty(message = "User first name should not be null or empty")
   private String firstName;
 
   @Schema(
       description = "User Last Name"
   )
-  // User last name should not be null or empty
   @NotEmpty(message = "User last name should not be null or empty")
   private String lastName;
 
   @Schema(
+      description = "User Position"
+  )
+  @NotEmpty(message = "User position should not be null or empty")
+  private String position;
+
+  @Schema(
       description = "User Email Address"
   )
-  // User email should not be null or empty
-  // Email address should be valid
   @NotEmpty(message = "User email should not be null or empty")
   @Email(message = "Email address should be valid")
   private String email;
+
+  @Schema(
+      description = "Projects managed by this user"
+  )
+  private List<ProjectDto> projects;
 }

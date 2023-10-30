@@ -39,10 +39,9 @@ public class UserController {
       responseCode = "201",
       description = "HTTP Status 201 CREATED"
   )
-  // build create User REST API
   @PostMapping
   public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto user) {
-    UserDto savedUser = this.userService.createUser(user);
+    final var savedUser = this.userService.createUser(user);
     return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
   }
 
@@ -54,11 +53,9 @@ public class UserController {
       responseCode = "200",
       description = "HTTP Status 200 SUCCESS"
   )
-  // build get user by id REST API
-  // http://localhost:8080/api/users/1
   @GetMapping("{id}")
   public ResponseEntity<UserDto> getUserById(@PathVariable("id") Long userId) {
-    UserDto user = this.userService.getUserById(userId);
+    final var user = this.userService.getUserById(userId);
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
@@ -70,11 +67,9 @@ public class UserController {
       responseCode = "200",
       description = "HTTP Status 200 SUCCESS"
   )
-  // Build Get All Users REST API
-  // http://localhost:8080/api/users
   @GetMapping
   public ResponseEntity<List<UserDto>> getAllUsers() {
-    List<UserDto> users = this.userService.getAllUsers();
+    final var users = this.userService.getAllUsers();
     return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
@@ -86,13 +81,11 @@ public class UserController {
       responseCode = "200",
       description = "HTTP Status 200 SUCCESS"
   )
-  // Build Update User REST API
   @PutMapping("{id}")
-  // http://localhost:8080/api/users/1
   public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long userId,
                                             @RequestBody @Valid UserDto user) {
     user.setId(userId);
-    UserDto updatedUser = this.userService.updateUser(user);
+    final var updatedUser = this.userService.updateUser(user);
     return new ResponseEntity<>(updatedUser, HttpStatus.OK);
   }
 
@@ -104,7 +97,6 @@ public class UserController {
       responseCode = "200",
       description = "HTTP Status 200 SUCCESS"
   )
-  // Build Delete User REST API
   @DeleteMapping("{id}")
   public ResponseEntity<String> deleteUser(@PathVariable("id") Long userId) {
     this.userService.deleteUser(userId);
